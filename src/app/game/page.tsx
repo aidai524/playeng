@@ -35,6 +35,22 @@ export default function GameCenter() {
       href: "/game/spell",
       color: "from-orange-500 to-red-500",
     },
+    {
+      id: "listen",
+      title: "听力大闯关",
+      emoji: "🎧",
+      description: "听发音，选出正确中文意思",
+      href: "/game/listen",
+      color: "from-cyan-500 to-blue-500",
+    },
+    {
+      id: "roleplay",
+      title: "对话角色扮演",
+      emoji: "🎭",
+      description: "扮演角色，补全英语对话",
+      href: "/game/roleplay",
+      color: "from-pink-500 to-rose-500",
+    },
   ]
 
   return (

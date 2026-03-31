@@ -70,20 +70,6 @@ export default function HomePage() {
           </Link>
         )}
 
-        <Link
-          href="/workbook"
-          className="block bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl p-4 text-white shadow-sm hover:scale-[1.02] transition-transform active:scale-[0.98]"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-4xl">📄</span>
-            <div className="flex-1">
-              <h3 className="font-bold text-lg">可打印练习册</h3>
-              <p className="text-white/80 text-sm">下载 PDF，按单元打印练习</p>
-            </div>
-            <span className="text-2xl font-bold">下载 →</span>
-          </div>
-        </Link>
-
         <div>
           <h2 className="text-lg font-bold mb-3">📚 选择单元</h2>
           <div className="space-y-3">

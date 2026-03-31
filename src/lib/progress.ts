@@ -32,6 +32,8 @@ interface ProgressState {
   getStreakDays: () => number
   getReviewWordIds: () => string[]
   getReviewCount: () => number
+  getDailyLogs: () => DailyLog[]
+  getWeakWords: (limit?: number) => { wordId: string; wrongCount: number; correctCount: number }[]
 }
 
 const STORAGE_KEY = "english-practice-progress"
@@ -168,6 +170,21 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   },
 
   getReviewCount: () => get().getReviewWordIds().length,
+
+  getDailyLogs: () => get().dailyLogs,
+
+  getWeakWords: (limit: number = 10) => {
+    const state = get()
+    return Object.values(state.wordProgress)
+      .filter(wp => wp.wrongCount > 0 && wp.status !== "mastered")
+      .sort((a, b) => {
+        const ratioA = a.wrongCount / Math.max(a.correctCount + a.wrongCount, 1)
+        const ratioB = b.wrongCount / Math.max(b.correctCount + b.wrongCount, 1)
+        return ratioB - ratioA
+      })
+      .slice(0, limit)
+      .map(wp => ({ wordId: wp.wordId, wrongCount: wp.wrongCount, correctCount: wp.correctCount }))
+  },
 }))
 
 export function initializeStore() {

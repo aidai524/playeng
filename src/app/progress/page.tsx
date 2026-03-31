@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { units } from "@/data/units"
 import { useProgressStore, initializeStore } from "@/lib/progress"
 import NavBar from "@/components/NavBar"
@@ -10,11 +10,41 @@ export default function ProgressPage() {
   const getUnitProgress = useProgressStore(s => s.getUnitProgress)
   const getTodayStats = useProgressStore(s => s.getTodayStats)
   const getStreakDays = useProgressStore(s => s.getStreakDays)
+  const getDailyLogs = useProgressStore(s => s.getDailyLogs)
+  const getWeakWords = useProgressStore(s => s.getWeakWords)
+  const wordProgress = useProgressStore(s => s.wordProgress)
 
   useEffect(() => {
     initializeStore()
     setMounted(true)
   }, [])
+
+  const calendarData = useMemo(() => {
+    const logs = mounted ? getDailyLogs() : []
+    const logMap = new Map(logs.map(l => [l.date, l]))
+    const days: { date: string; count: number; dayOfWeek: number }[] = []
+    const today = new Date()
+    for (let i = 27; i >= 0; i--) {
+      const d = new Date(today)
+      d.setDate(d.getDate() - i)
+      const dateStr = d.toISOString().split("T")[0]
+      const log = logMap.get(dateStr)
+      days.push({
+        date: dateStr,
+        count: log ? log.wordsLearned + log.wordsReviewed : 0,
+        dayOfWeek: d.getDay(),
+      })
+    }
+    return days
+  }, [mounted, getDailyLogs])
+
+  const weakWordsList = useMemo(() => {
+    if (!mounted) return []
+    return getWeakWords(8).map(ww => {
+      const word = units.flatMap(u => u.words).find(w => w.id === ww.wordId)
+      return word ? { ...ww, en: word.en, cn: word.cn, emoji: word.emoji } : null
+    }).filter(Boolean) as { wordId: string; wrongCount: number; correctCount: number; en: string; cn: string; emoji: string }[]
+  }, [mounted, getWeakWords, wordProgress])
 
   if (!mounted) {
     return <div className="flex-1 flex items-center justify-center"><p className="text-text-light">加载中...</p></div>
@@ -29,6 +59,9 @@ export default function ProgressPage() {
     totalWords += u.words.length
     totalMastered += p.mastered
   })
+
+  const weekLabels = ["日", "一", "二", "三", "四", "五", "六"]
+  const months = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
 
   return (
     <div className="flex-1 flex flex-col">
@@ -69,6 +102,84 @@ export default function ProgressPage() {
             ({totalWords > 0 ? Math.round((totalMastered / totalWords) * 100) : 0}%)
           </p>
         </div>
+
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-bold">学习日历</h2>
+            <span className="text-xs text-text-light">近4周</span>
+          </div>
+          <div className="flex gap-0.5 justify-center mb-1">
+            {weekLabels.map(d => (
+              <div key={d} className="w-[calc((100%-6px)/7)] text-center text-xs text-text-light">{d}</div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-1">
+            {(() => {
+              const firstDay = calendarData[0]?.dayOfWeek ?? 0
+              const cells = []
+              for (let i = 0; i < firstDay; i++) {
+                cells.push(<div key={`empty-${i}`} />)
+              }
+              calendarData.forEach(day => {
+                let color = "bg-gray-100"
+                if (day.count > 0 && day.count <= 5) color = "bg-green-200"
+                else if (day.count > 5 && day.count <= 15) color = "bg-green-400"
+                else if (day.count > 15 && day.count <= 30) color = "bg-green-500"
+                else if (day.count > 30) color = "bg-green-700"
+                cells.push(
+                  <div
+                    key={day.date}
+                    className={`aspect-square rounded-sm ${color} flex items-center justify-center`}
+                    title={`${day.date}: ${day.count} 次`}
+                  >
+                    <span className="text-[8px] text-text-light">{new Date(day.date).getDate()}</span>
+                  </div>
+                )
+              })
+              return cells
+            })()}
+          </div>
+          <div className="flex items-center justify-end gap-1 mt-2">
+            <span className="text-xs text-text-light">少</span>
+            <div className="w-3 h-3 rounded-sm bg-gray-100" />
+            <div className="w-3 h-3 rounded-sm bg-green-200" />
+            <div className="w-3 h-3 rounded-sm bg-green-400" />
+            <div className="w-3 h-3 rounded-sm bg-green-500" />
+            <div className="w-3 h-3 rounded-sm bg-green-700" />
+            <span className="text-xs text-text-light">多</span>
+          </div>
+        </div>
+
+        {weakWordsList.length > 0 && (
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <h2 className="font-bold mb-3">⚠️ 薄弱词汇 ({weakWordsList.length})</h2>
+            <p className="text-xs text-text-light mb-3">这些单词错误率较高，需要加强练习</p>
+            <div className="space-y-2">
+              {weakWordsList.map(word => {
+                const total = word.correctCount + word.wrongCount
+                const pct = total > 0 ? Math.round((word.correctCount / total) * 100) : 0
+                return (
+                  <div key={word.wordId} className="flex items-center gap-2 p-2 bg-red-50 rounded-xl">
+                    <span className="text-lg">{word.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">{word.en}</span>
+                        <span className="text-xs text-text-light">{word.cn}</span>
+                      </div>
+                      <div className="h-1.5 bg-red-100 rounded-full overflow-hidden mt-1">
+                        <div
+                          className="h-full bg-red-400 rounded-full"
+                          style={{ width: `${100 - pct}%` }}
+                        />
+                      </div>
+                    </div>
+                    <span className="text-xs text-red-600 font-bold">{pct}%</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="space-y-3">
           <h2 className="font-bold">各单元详情</h2>

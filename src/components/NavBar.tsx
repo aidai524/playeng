@@ -14,7 +14,7 @@ export default function NavBar() {
   ]
 
   return (
-    <nav className="mt-auto border-t border-gray-100 bg-white sticky bottom-0">
+    <nav className="mt-auto border-t border-gray-100 bg-white sticky bottom-0 pb-[env(safe-area-inset-bottom)]">
       <div className="flex justify-around py-2">
         {links.map(link => (
           <Link

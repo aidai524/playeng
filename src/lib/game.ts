@@ -16,6 +16,8 @@ export const ALL_BADGES: Badge[] = [
   { id: "speed-demon", name: "快手达人", emoji: "⚡", description: "配对游戏60秒内通关" },
   { id: "spell-5", name: "拼写新星", emoji: "⭐", description: "拼写挑战连续答对5题" },
   { id: "spell-10", name: "拼写大师", emoji: "🏅", description: "拼写挑战连续答对10题" },
+  { id: "listen-perfect", name: "金耳朵", emoji: "👂", description: "听力闯关全部答对" },
+  { id: "roleplay-star", name: "对话之星", emoji: "🌟", description: "完成一次对话角色扮演" },
   { id: "score-100", name: "百分学霸", emoji: "💯", description: "单次游戏获得100分" },
   { id: "score-200", name: "超级学霸", emoji: "🏆", description: "单次游戏获得200分" },
   { id: "daily-3", name: "勤奋学员", emoji: "📅", description: "累计学习3天" },
