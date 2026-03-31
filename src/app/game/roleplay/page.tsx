@@ -204,72 +204,44 @@ function RolePlayContent() {
             <h3 className="font-bold">{dialogue.title}</h3>
             <span className="text-xs text-text-light ml-auto">第 {lineIdx + 1} / {dialogue.lines.length} 句</span>
           </div>
-          {!lineFeedback ? (
-            <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
-              <div className="flex items-center gap-2 mb-2">
-                <span className={`font-bold text-xs px-1.5 py-0.5 rounded ${
-                  currentLine.speaker === "A" ? "bg-blue-100 text-blue-700" : "bg-pink-100 text-pink-700"
-                }`}>
-                  {currentLine.speaker}
-                </span>
-                <span className="text-text-light text-xs">{currentLine.cn}</span>
-              </div>
-              <p className="font-medium text-blue-400">{firstHalf} ________</p>
+          <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
+            <div className="flex items-center gap-2 mb-2">
+              <span className={`font-bold text-xs px-1.5 py-0.5 rounded ${
+                currentLine.speaker === "A" ? "bg-blue-100 text-blue-700" : "bg-pink-100 text-pink-700"
+              }`}>
+                {currentLine.speaker}
+              </span>
+              <span className="text-text-light text-xs">{currentLine.cn}</span>
             </div>
-          ) : (
-          <div className="space-y-2">
-            {dialogue.lines.map((line, i) => {
-              const isPast = i < lineIdx
-              const isCurrent = i === lineIdx
-              const fb = feedback[i]
-              return (
-                <div
-                  key={i}
-                  className={`p-2.5 rounded-xl text-sm ${
-                    isCurrent
-                      ? "bg-blue-50 border-2 border-blue-300"
-                      : isPast
-                        ? fb === "correct"
-                          ? "bg-green-50 border border-green-200"
-                          : "bg-red-50 border border-red-200"
-                        : "bg-gray-50 opacity-50"
-                  }`}
-                >
-                  <div className="flex items-start gap-2">
-                    <span className={`font-bold text-xs px-1.5 py-0.5 rounded ${
-                      line.speaker === "A" ? "bg-blue-100 text-blue-700" : "bg-pink-100 text-pink-700"
-                    }`}>
-                      {line.speaker}
-                    </span>
-                    <div className="flex-1">
-                      <p className="font-medium">{line.en}</p>
-                      <p className="text-text-light text-xs">{line.cn}</p>
-                    </div>
-                    {isPast && (
-                      <span>{fb === "correct" ? "✅" : "❌"}</span>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
+            {lineFeedback ? (
+              <div className="flex items-center gap-2">
+                <p className="font-medium text-sm">{currentLine.en}</p>
+                <span>{lineFeedback === "correct" ? "✅" : "❌"}</span>
+              </div>
+            ) : (
+              <p className="font-medium text-blue-400">{firstHalf} ________</p>
+            )}
           </div>
-          )}
         </div>
 
         <div className="bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl p-4 text-white">
-          <p className="text-white/80 text-xs mb-1">请补全句子：</p>
-          <p className="font-bold text-lg">
-            {firstHalf} ____________
-          </p>
-          {lineFeedback && (
-            <p className="text-sm mt-1 text-white/90">
-              完整: {currentLine.en}
-            </p>
-          )}
-          {!lineFeedback && showHint && (
-            <p className="text-sm mt-1 text-yellow-200">
-              提示: {answerPart.slice(0, Math.ceil(answerPart.length / 2))}...
-            </p>
+          {!lineFeedback ? (
+            <>
+              <p className="text-white/80 text-xs mb-1">请补全句子：</p>
+              <p className="font-bold text-lg">{firstHalf} ____________</p>
+              {showHint && (
+                <p className="text-sm mt-1 text-yellow-200">
+                  提示: {answerPart.slice(0, Math.ceil(answerPart.length / 2))}...
+                </p>
+              )}
+            </>
+          ) : (
+            <div className={`text-center ${
+              lineFeedback === "correct" ? "text-green-200" : "text-red-200"
+            }`}>
+              <p className="text-2xl">{lineFeedback === "correct" ? "✅" : "❌"}</p>
+              <p className="font-bold">{lineFeedback === "correct" ? "太棒了！答对了" : "答错了，继续加油"}</p>
+            </div>
           )}
         </div>
 
