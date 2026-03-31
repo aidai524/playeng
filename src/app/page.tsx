@@ -13,6 +13,7 @@ export default function HomePage() {
   const getUnitProgress = useProgressStore(s => s.getUnitProgress)
   const getTodayStats = useProgressStore(s => s.getTodayStats)
   const getStreakDays = useProgressStore(s => s.getStreakDays)
+  const getReviewCount = useProgressStore(s => s.getReviewCount)
 
   useEffect(() => {
     initializeStore()
@@ -30,6 +31,7 @@ export default function HomePage() {
 
   const todayStats = getTodayStats()
   const streak = getStreakDays()
+  const reviewCount = getReviewCount()
 
   return (
     <div className="flex-1 flex flex-col">
@@ -51,6 +53,22 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+
+        {reviewCount > 0 && (
+          <Link
+            href="/review"
+            className="block bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl p-4 text-white shadow-sm hover:scale-[1.02] transition-transform active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-4xl">🔄</span>
+              <div className="flex-1">
+                <h3 className="font-bold text-lg">待复习</h3>
+                <p className="text-white/80 text-sm">{reviewCount} 个单词等你来复习</p>
+              </div>
+              <span className="text-2xl font-bold">开始 →</span>
+            </div>
+          </Link>
+        )}
 
         <div>
           <h2 className="text-lg font-bold mb-3">📚 选择单元</h2>
