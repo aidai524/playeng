@@ -30,6 +30,8 @@ interface ProgressState {
   getUnitProgress: (unitId: string, totalWords: number) => { mastered: number; learning: number; new: number }
   getTodayStats: () => { learned: number; reviewed: number }
   getStreakDays: () => number
+  getReviewWordIds: () => string[]
+  getReviewCount: () => number
 }
 
 const STORAGE_KEY = "english-practice-progress"
@@ -155,6 +157,17 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     }
     return streak
   },
+
+  getReviewWordIds: () => {
+    const state = get()
+    const now = Date.now()
+    return Object.values(state.wordProgress)
+      .filter(wp => wp.status === "learning" && wp.nextReview <= now)
+      .sort((a, b) => a.nextReview - b.nextReview)
+      .map(wp => wp.wordId)
+  },
+
+  getReviewCount: () => get().getReviewWordIds().length,
 }))
 
 export function initializeStore() {
