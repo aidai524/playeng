@@ -8,6 +8,8 @@ import WordCard from "@/components/WordCard"
 import ProgressBar from "@/components/ProgressBar"
 import NavBar from "@/components/NavBar"
 
+export const runtime = "edge";
+
 export default function LearnPage() {
   const params = useParams()
   const router = useRouter()
