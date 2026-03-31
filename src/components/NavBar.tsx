@@ -8,6 +8,7 @@ export default function NavBar() {
 
   const links = [
     { href: "/", label: "首页", emoji: "🏠" },
+    { href: "/game", label: "游戏", emoji: "🎮" },
     { href: "/progress", label: "进度", emoji: "📊" },
   ]
 
