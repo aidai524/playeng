@@ -202,13 +202,26 @@ function RolePlayContent() {
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">🎭</span>
             <h3 className="font-bold">{dialogue.title}</h3>
+            <span className="text-xs text-text-light ml-auto">第 {lineIdx + 1} / {dialogue.lines.length} 句</span>
           </div>
+          {!lineFeedback ? (
+            <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
+              <div className="flex items-center gap-2 mb-2">
+                <span className={`font-bold text-xs px-1.5 py-0.5 rounded ${
+                  currentLine.speaker === "A" ? "bg-blue-100 text-blue-700" : "bg-pink-100 text-pink-700"
+                }`}>
+                  {currentLine.speaker}
+                </span>
+                <span className="text-text-light text-xs">{currentLine.cn}</span>
+              </div>
+              <p className="font-medium text-blue-400">{firstHalf} ________</p>
+            </div>
+          ) : (
           <div className="space-y-2">
             {dialogue.lines.map((line, i) => {
               const isPast = i < lineIdx
               const isCurrent = i === lineIdx
               const fb = feedback[i]
-              const isAnswered = isCurrent && !!lineFeedback
               return (
                 <div
                   key={i}
@@ -229,11 +242,7 @@ function RolePlayContent() {
                       {line.speaker}
                     </span>
                     <div className="flex-1">
-                      {isCurrent && !isAnswered ? (
-                        <p className="font-medium text-blue-400">{firstHalf} ________</p>
-                      ) : (
-                        <p className="font-medium">{line.en}</p>
-                      )}
+                      <p className="font-medium">{line.en}</p>
                       <p className="text-text-light text-xs">{line.cn}</p>
                     </div>
                     {isPast && (
@@ -244,6 +253,7 @@ function RolePlayContent() {
               )
             })}
           </div>
+          )}
         </div>
 
         <div className="bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl p-4 text-white">
