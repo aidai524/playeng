@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next"
+import AuthInitializer from "@/components/AuthInitializer"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -18,7 +19,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="zh-CN">
       <body>
         <div className="max-w-lg mx-auto min-h-dvh flex flex-col">
-          {children}
+          <AuthInitializer>
+            {children}
+          </AuthInitializer>
         </div>
       </body>
     </html>

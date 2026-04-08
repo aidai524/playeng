@@ -1,6 +1,8 @@
 "use client"
 
 import { create } from "zustand"
+import { scheduleSync } from "./sync"
+import { useAuthStore } from "./auth"
 
 export type WordStatus = "new" | "learning" | "mastered"
 
@@ -118,6 +120,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         dailyLogs: logs,
       }
       saveToStorage(newState)
+      const user = useAuthStore.getState().user
+      if (user) scheduleSync(user.id)
       return newState
     })
   },

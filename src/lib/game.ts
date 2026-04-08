@@ -1,6 +1,8 @@
 "use client"
 
 import { create } from "zustand"
+import { scheduleSync } from "./sync"
+import { useAuthStore } from "./auth"
 
 export interface Badge {
   id: string
@@ -65,6 +67,8 @@ export const useGameStore = create<GameState>((set, get) => ({
         gameHistory: [...state.gameHistory, { game, score, date: new Date().toISOString().split("T")[0] }],
       }
       saveGames(newState)
+      const user = useAuthStore.getState().user
+      if (user) scheduleSync(user.id)
       return newState
     })
   },
@@ -78,6 +82,8 @@ export const useGameStore = create<GameState>((set, get) => ({
         gameHistory: state.gameHistory,
       }
       saveGames(newState)
+      const user = useAuthStore.getState().user
+      if (user) scheduleSync(user.id)
       return newState
     })
   },

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { units } from "@/data/units"
 import { useProgressStore, initializeStore } from "@/lib/progress"
+import { useAuthStore } from "@/lib/auth"
 import { initVoices } from "@/lib/speech"
 import ProgressBar from "@/components/ProgressBar"
 import NavBar from "@/components/NavBar"
@@ -14,6 +15,8 @@ export default function HomePage() {
   const getTodayStats = useProgressStore(s => s.getTodayStats)
   const getStreakDays = useProgressStore(s => s.getStreakDays)
   const getReviewCount = useProgressStore(s => s.getReviewCount)
+  const user = useAuthStore(s => s.user)
+  const signOut = useAuthStore(s => s.signOut)
 
   useEffect(() => {
     initializeStore()
@@ -36,9 +39,17 @@ export default function HomePage() {
   return (
     <div className="flex-1 flex flex-col">
       <div className="p-4 space-y-5">
-        <header className="text-center pt-4 pb-2">
+        <header className="text-center pt-4 pb-2 relative">
           <h1 className="text-2xl font-bold text-primary">🎓 英语小达人</h1>
           <p className="text-text-light text-sm mt-1">四年级下册 · 词汇学习</p>
+          {user && (
+            <button
+              onClick={signOut}
+              className="absolute right-0 top-4 text-xs text-text-light hover:text-danger transition-colors"
+            >
+              退出登录
+            </button>
+          )}
         </header>
 
         <div className="bg-gradient-to-r from-primary to-primary-light rounded-2xl p-4 text-white">
