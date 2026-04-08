@@ -1,6 +1,7 @@
 "use client"
 
 import { speak, speakSlowly } from "@/lib/speech"
+import SpeakingPractice from "./SpeakingPractice"
 import { useState } from "react"
 
 interface WordCardProps {
@@ -130,6 +131,8 @@ export default function WordCard({ word, onMastered, showSpelling = true }: Word
           )}
         </div>
       )}
+
+      <SpeakingPractice word={word.en} onComplete={(correct) => onMastered?.(word.id, correct)} />
     </div>
   )
 }
