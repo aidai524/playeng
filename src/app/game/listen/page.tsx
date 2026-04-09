@@ -7,9 +7,8 @@ import { getAllUnits } from "@/data/courses"
 import { speak } from "@/lib/speech"
 import { useGameStore, initializeGameStore, checkAndUnlockBadges } from "@/lib/game"
 import { useProgressStore, initializeStore } from "@/lib/progress"
+import { useCourseStore } from "@/lib/courseStore"
 import NavBar from "@/components/NavBar"
-
-const units = getAllUnits()
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
@@ -23,6 +22,7 @@ function shuffle<T>(arr: T[]): T[] {
 function ListenQuizContent() {
   const searchParams = useSearchParams()
   const unitId = searchParams.get("unit") || "all"
+  const units = useCourseStore(s => s.currentUnits)
 
   const [mounted, setMounted] = useState(false)
   const addScore = useGameStore(s => s.addScore)

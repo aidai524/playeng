@@ -1,8 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { getAllUnits } from "@/data/courses"
-import { useGameStore, initializeGameStore, ALL_BADGES } from "@/lib/game"
+import { ALL_BADGES } from "@/lib/game"
+import { useGameStore, initializeGameStore } from "@/lib/game"
+import { useCourseStore } from "@/lib/courseStore"
 import { useEffect, useState } from "react"
 import NavBar from "@/components/NavBar"
 
@@ -10,6 +11,7 @@ export default function GameCenter() {
   const [mounted, setMounted] = useState(false)
   const totalScore = useGameStore(s => s.totalScore)
   const badges = useGameStore(s => s.badges)
+  const currentGrade = useCourseStore(s => s.currentGrade)
 
   useEffect(() => {
     initializeGameStore()
@@ -59,6 +61,9 @@ export default function GameCenter() {
         <header className="text-center pt-4">
           <h1 className="text-2xl font-bold">🎮 游戏中心</h1>
           <p className="text-text-light text-sm mt-1">总分：{totalScore} 🪙</p>
+          {currentGrade && (
+            <p className="text-xs text-primary mt-1">{currentGrade.emoji} {currentGrade.title}</p>
+          )}
         </header>
 
         <div className="space-y-3">

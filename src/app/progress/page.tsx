@@ -1,14 +1,13 @@
 "use client"
 
 import { useEffect, useState, useMemo } from "react"
-import { getAllUnits } from "@/data/courses"
+import { useCourseStore } from "@/lib/courseStore"
 import { useProgressStore, initializeStore } from "@/lib/progress"
 import NavBar from "@/components/NavBar"
 
-const units = getAllUnits()
-
 export default function ProgressPage() {
   const [mounted, setMounted] = useState(false)
+  const units = useCourseStore(s => s.currentUnits)
   const getUnitProgress = useProgressStore(s => s.getUnitProgress)
   const getTodayStats = useProgressStore(s => s.getTodayStats)
   const getStreakDays = useProgressStore(s => s.getStreakDays)

@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { getAllWords } from "@/data/courses"
 import type { Word } from "@/data/units"
 import { useProgressStore, initializeStore } from "@/lib/progress"
+import { useCourseStore } from "@/lib/courseStore"
 import { speak } from "@/lib/speech"
 import NavBar from "@/components/NavBar"
 
@@ -26,6 +26,7 @@ export default function ReviewPage() {
   const [result, setResult] = useState<"known" | "unknown" | null>(null)
   const [sessionStats, setSessionStats] = useState({ correct: 0, wrong: 0 })
   const [finished, setFinished] = useState(false)
+  const allWords = useCourseStore(s => s.currentWords)
 
   const getReviewWordIds = useProgressStore(s => s.getReviewWordIds)
   const markWordSeen = useProgressStore(s => s.markWordSeen)
@@ -36,7 +37,6 @@ export default function ReviewPage() {
   }, [])
 
   const loadReviewWords = useCallback(() => {
-    const allWords = getAllWords()
     const dueIds = new Set(getReviewWordIds())
     const due = allWords.filter(w => dueIds.has(w.id))
 

@@ -6,9 +6,8 @@ import { getAllUnits } from "@/data/courses"
 import type { Word } from "@/data/units"
 import { speak } from "@/lib/speech"
 import { useGameStore, initializeGameStore, checkAndUnlockBadges } from "@/lib/game"
+import { useCourseStore } from "@/lib/courseStore"
 import NavBar from "@/components/NavBar"
-
-const units = getAllUnits()
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
@@ -26,6 +25,7 @@ function SpellGameInner() {
   const searchParams = useSearchParams()
   const unitId = searchParams.get("unit") || "all"
   const [mounted, setMounted] = useState(false)
+  const units = useCourseStore(s => s.currentUnits)
 
   const [words, setWords] = useState<Word[]>([])
   const [round, setRound] = useState(0)

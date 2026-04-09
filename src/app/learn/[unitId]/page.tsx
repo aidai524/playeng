@@ -2,15 +2,13 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { getAllUnits } from "@/data/courses"
+import { getUnitById } from "@/data/courses"
 import { useProgressStore, initializeStore } from "@/lib/progress"
 import WordCard from "@/components/WordCard"
 import ProgressBar from "@/components/ProgressBar"
 import NavBar from "@/components/NavBar"
 
 export const runtime = "edge";
-
-const units = getAllUnits()
 
 export default function LearnPage() {
   const params = useParams()
@@ -19,7 +17,8 @@ export default function LearnPage() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [mounted, setMounted] = useState(false)
 
-  const unit = units.find(u => u.id === unitId)
+  const unitResult = getUnitById(unitId)
+  const unit = unitResult?.unit
   const getUnitProgress = useProgressStore(s => s.getUnitProgress)
   const markWordSeen = useProgressStore(s => s.markWordSeen)
 

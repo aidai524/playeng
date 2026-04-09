@@ -6,13 +6,13 @@ import Link from "next/link"
 import { getAllUnits } from "@/data/courses"
 import { speak } from "@/lib/speech"
 import { useGameStore, initializeGameStore, checkAndUnlockBadges } from "@/lib/game"
+import { useCourseStore } from "@/lib/courseStore"
 import NavBar from "@/components/NavBar"
-
-const units = getAllUnits()
 
 function RolePlayContent() {
   const searchParams = useSearchParams()
-  const unitId = searchParams.get("unit") || units[0].id
+  const units = useCourseStore(s => s.currentUnits)
+  const unitId = searchParams.get("unit") || (units[0]?.id ?? "")
 
   const [mounted, setMounted] = useState(false)
   const addScore = useGameStore(s => s.addScore)

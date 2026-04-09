@@ -5,13 +5,17 @@ import Link from "next/link"
 import { grades } from "@/data/courses"
 import { useProgressStore, initializeStore } from "@/lib/progress"
 import { useAuthStore } from "@/lib/auth"
+import { useCourseStore } from "@/lib/courseStore"
 import { initVoices } from "@/lib/speech"
 import ProgressBar from "@/components/ProgressBar"
 import NavBar from "@/components/NavBar"
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false)
-  const [selectedGradeId, setSelectedGradeId] = useState<string | null>(null)
+  const currentGradeId = useCourseStore(s => s.currentGradeId)
+  const setCurrentGrade = useCourseStore(s => s.setCurrentGrade)
+  const selectedGradeId = currentGradeId
+  const setSelectedGradeId = setCurrentGrade
   const getUnitProgress = useProgressStore(s => s.getUnitProgress)
   const getTodayStats = useProgressStore(s => s.getTodayStats)
   const getStreakDays = useProgressStore(s => s.getStreakDays)

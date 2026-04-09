@@ -2,13 +2,11 @@
 
 import { Suspense, useEffect, useState, useCallback, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { getAllUnits } from "@/data/courses"
 import type { Word } from "@/data/units"
 import { speak } from "@/lib/speech"
 import { useGameStore, initializeGameStore, checkAndUnlockBadges } from "@/lib/game"
+import { useCourseStore } from "@/lib/courseStore"
 import NavBar from "@/components/NavBar"
-
-const units = getAllUnits()
 
 interface Card {
   id: string
@@ -32,6 +30,7 @@ function MatchGameInner() {
   const searchParams = useSearchParams()
   const unitId = searchParams.get("unit") || "all"
   const [mounted, setMounted] = useState(false)
+  const units = useCourseStore(s => s.currentUnits)
   const [cards, setCards] = useState<Card[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [matched, setMatched] = useState(0)

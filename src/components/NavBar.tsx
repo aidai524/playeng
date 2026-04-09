@@ -1,10 +1,21 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
+import { useCourseStore } from "@/lib/courseStore"
+import { getGradeById } from "@/data/courses"
 
 export default function NavBar() {
+  const router = useRouter()
   const pathname = usePathname()
+  const currentGradeId = useCourseStore(s => s.currentGradeId)
+  const setCurrentGrade = useCourseStore(s => s.setCurrentGrade)
+  const currentGrade = currentGradeId ? getGradeById(currentGradeId) : undefined
+
+  const handleSwitchGrade = () => {
+    setCurrentGrade(null)
+    router.push("/")
+  }
 
   const links = [
     { href: "/", label: "首页", emoji: "🏠" },
@@ -15,6 +26,16 @@ export default function NavBar() {
 
   return (
     <nav className="mt-auto border-t border-gray-100 bg-white sticky bottom-0 pb-[env(safe-area-inset-bottom)]">
+      {currentGrade && (
+        <button
+          onClick={handleSwitchGrade}
+          className="w-full flex items-center justify-center gap-1 py-1 text-xs text-primary bg-primary/5 hover:bg-primary/10 transition-colors"
+        >
+          <span>{currentGrade.emoji}</span>
+          <span className="font-medium">{currentGrade.title}</span>
+          <span className="text-text-light">· 点击切换</span>
+        </button>
+      )}
       <div className="flex justify-around py-2">
         {links.map(link => (
           <Link
