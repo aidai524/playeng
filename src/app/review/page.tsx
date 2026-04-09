@@ -2,14 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { units, Word } from "@/data/units"
+import { getAllWords } from "@/data/courses"
+import type { Word } from "@/data/units"
 import { useProgressStore, initializeStore } from "@/lib/progress"
 import { speak } from "@/lib/speech"
 import NavBar from "@/components/NavBar"
-
-function getAllWords(): Word[] {
-  return units.flatMap(u => u.words)
-}
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]

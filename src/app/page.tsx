@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { units } from "@/data/units"
+import { grades } from "@/data/courses"
 import { useProgressStore, initializeStore } from "@/lib/progress"
 import { useAuthStore } from "@/lib/auth"
 import { initVoices } from "@/lib/speech"
@@ -11,6 +11,7 @@ import NavBar from "@/components/NavBar"
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false)
+  const [selectedGradeId, setSelectedGradeId] = useState<string | null>(null)
   const getUnitProgress = useProgressStore(s => s.getUnitProgress)
   const getTodayStats = useProgressStore(s => s.getTodayStats)
   const getStreakDays = useProgressStore(s => s.getStreakDays)
@@ -35,13 +36,14 @@ export default function HomePage() {
   const todayStats = getTodayStats()
   const streak = getStreakDays()
   const reviewCount = getReviewCount()
+  const selectedGrade = grades.find(g => g.id === selectedGradeId)
 
   return (
     <div className="flex-1 flex flex-col">
       <div className="p-4 space-y-5">
         <header className="text-center pt-4 pb-2 relative">
           <h1 className="text-2xl font-bold text-primary">🎓 英语小达人</h1>
-          <p className="text-text-light text-sm mt-1">四年级下册 · 词汇学习</p>
+          <p className="text-text-light text-sm mt-1">小学英语 · 词汇学习</p>
           {user && (
             <button
               onClick={signOut}
@@ -81,38 +83,75 @@ export default function HomePage() {
           </Link>
         )}
 
-        <div>
-          <h2 className="text-lg font-bold mb-3">📚 选择单元</h2>
-          <div className="space-y-3">
-            {units.map(unit => {
-              const progress = getUnitProgress(unit.id, unit.words.length)
-              return (
-                <Link
-                  key={unit.id}
-                  href={`/learn/${unit.id}`}
-                  className="block bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-primary-light transition-all"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-3xl">{unit.emoji}</span>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-base">{unit.title}</h3>
-                      <p className="text-text-light text-xs">{unit.words.length} 个单词</p>
+        {!selectedGrade ? (
+          <div>
+            <h2 className="text-lg font-bold mb-3">📚 选择教材</h2>
+            <div className="space-y-3">
+              {grades.map(grade => {
+                const totalWords = grade.units.reduce((s, u) => s + u.words.length, 0)
+                return (
+                  <button
+                    key={grade.id}
+                    onClick={() => setSelectedGradeId(grade.id)}
+                    className="w-full text-left bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md hover:border-primary-light transition-all"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="text-4xl">{grade.emoji}</span>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-lg">{grade.title}</h3>
+                        <p className="text-text-light text-sm mt-1">{grade.description}</p>
+                        <p className="text-text-light text-xs mt-1">{grade.units.length} 个单元 · {totalWords} 个单词</p>
+                      </div>
+                      <span className="text-primary text-xl">›</span>
                     </div>
-                    <span className="text-primary font-bold text-sm">
-                      {progress.mastered}/{unit.words.length}
-                    </span>
-                  </div>
-                  <ProgressBar
-                    mastered={progress.mastered}
-                    learning={progress.learning}
-                    newCount={progress.new}
-                    total={unit.words.length}
-                  />
-                </Link>
-              )
-            })}
+                  </button>
+                )
+              })}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <button
+                onClick={() => setSelectedGradeId(null)}
+                className="text-primary font-medium text-sm hover:underline"
+              >
+                ← 返回教材选择
+              </button>
+              <span className="text-text-light">·</span>
+              <h2 className="text-lg font-bold">{selectedGrade.emoji} {selectedGrade.title}</h2>
+            </div>
+            <div className="space-y-3">
+              {selectedGrade.units.map(unit => {
+                const progress = getUnitProgress(unit.id, unit.words.length)
+                return (
+                  <Link
+                    key={unit.id}
+                    href={`/learn/${unit.id}`}
+                    className="block bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-primary-light transition-all"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-3xl">{unit.emoji}</span>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-base">{unit.title}</h3>
+                        <p className="text-text-light text-xs">{unit.words.length} 个单词</p>
+                      </div>
+                      <span className="text-primary font-bold text-sm">
+                        {progress.mastered}/{unit.words.length}
+                      </span>
+                    </div>
+                    <ProgressBar
+                      mastered={progress.mastered}
+                      learning={progress.learning}
+                      newCount={progress.new}
+                      total={unit.words.length}
+                    />
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
       <NavBar />
     </div>

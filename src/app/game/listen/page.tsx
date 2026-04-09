@@ -3,11 +3,13 @@
 import { useState, useEffect, useCallback, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { units } from "@/data/units"
+import { getAllUnits } from "@/data/courses"
 import { speak } from "@/lib/speech"
 import { useGameStore, initializeGameStore, checkAndUnlockBadges } from "@/lib/game"
 import { useProgressStore, initializeStore } from "@/lib/progress"
 import NavBar from "@/components/NavBar"
+
+const units = getAllUnits()
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]

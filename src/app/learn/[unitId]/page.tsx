@@ -2,13 +2,15 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { units } from "@/data/units"
+import { getAllUnits } from "@/data/courses"
 import { useProgressStore, initializeStore } from "@/lib/progress"
 import WordCard from "@/components/WordCard"
 import ProgressBar from "@/components/ProgressBar"
 import NavBar from "@/components/NavBar"
 
 export const runtime = "edge";
+
+const units = getAllUnits()
 
 export default function LearnPage() {
   const params = useParams()

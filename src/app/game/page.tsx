@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { units } from "@/data/units"
+import { getAllUnits } from "@/data/courses"
 import { useGameStore, initializeGameStore, ALL_BADGES } from "@/lib/game"
 import { useEffect, useState } from "react"
 import NavBar from "@/components/NavBar"
