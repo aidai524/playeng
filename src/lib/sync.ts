@@ -118,6 +118,7 @@ export async function pushAllToCloud(userId: string) {
 
 export async function syncOnLogin(userId: string) {
   await pullFromCloud(userId)
+  await pushAllToCloud(userId)
 }
 
 let syncTimer: ReturnType<typeof setTimeout> | null = null

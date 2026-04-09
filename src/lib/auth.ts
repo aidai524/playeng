@@ -32,11 +32,18 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (error) return { error: error.message }
 
     if (data.user) {
-      set({ user: data.user })
-      await getSupabase().from("profiles").upsert({
-        id: data.user.id,
-        updated_at: new Date().toISOString(),
-      }, { onConflict: "id" })
+      // If email confirmation is disabled, data.session exists and user is logged in
+      // If email confirmation is enabled, data.session is null — user must verify email first
+      if (data.session) {
+        set({ user: data.user })
+        await getSupabase().from("profiles").upsert({
+          id: data.user.id,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: "id" })
+        return { error: null }
+      }
+      // Email confirmation required
+      return { error: "注册成功！请查收邮箱确认后再登录。如果收不到邮件，请联系管理员。" }
     }
 
     return { error: null }

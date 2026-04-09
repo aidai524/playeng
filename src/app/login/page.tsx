@@ -31,21 +31,24 @@ export default function LoginPage() {
         setError(error)
         return
       }
+      // Registration succeeded and auto-logged in (email confirmation disabled)
+      initializeStore()
+      initializeGameStore()
+      const user = useAuthStore.getState().user
+      if (user) await syncOnLogin(user.id)
+      router.push("/")
     } else {
       const { error } = await signIn(trimmedEmail, password)
       if (error) {
-        setError(error)
+        setError(error === "Invalid login credentials" ? "邮箱或密码错误" : error)
         return
       }
+      initializeStore()
+      initializeGameStore()
+      const user = useAuthStore.getState().user
+      if (user) await syncOnLogin(user.id)
+      router.push("/")
     }
-
-    initializeStore()
-    initializeGameStore()
-
-    const user = useAuthStore.getState().user
-    if (user) await syncOnLogin(user.id)
-
-    router.push("/")
   }
 
   const switchMode = () => {
